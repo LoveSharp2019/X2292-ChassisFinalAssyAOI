@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0">
+<procedure name="SetCoordinate">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="RegionX" base_type="iconic" dimension="0"/>
+<par name="RegionY" base_type="iconic" dimension="0"/>
+</oo>
+<oc>
+<par name="AxisX" base_type="ctrl" dimension="0"/>
+<par name="AxisY" base_type="ctrl" dimension="0"/>
+<par name="SinAngle" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c></c>
+<l>gen_empty_obj (RegionX)</l>
+<l>gen_empty_obj (RegionY)</l>
+<l>AxisX:=[]</l>
+<l>AxisY:=[]</l>
+<l>SinAngle:=[]</l>
+<c></c>
+<c>********确定找边缘位置**************************</c>
+<l>threshold (Image, Region, -5, 5)</l>
+<l>fill_up (Region, RegionFillUp)</l>
+<l>opening_rectangle1 (RegionFillUp, RegionOpening, 500, 1000)</l>
+<l>shape_trans (RegionOpening, RegionTrans, 'inner_rectangle1')</l>
+<l>smallest_rectangle1 (RegionTrans, rectRow1, rectCol1, rectRow2, rectCol2)</l>
+<l>area_center (RegionTrans, Area, Row, Column)</l>
+<l>* gen_cross_contour_xld (Cross, Row, Column, 30, 0)</l>
+<c>*确定左边缘的测量位置</c>
+<l>measureLeftRow1:=Row-2000</l>
+<l>measureLeftRow2:=Row+2000</l>
+<l>gen_region_line (RegionLinesUp, measureLeftRow1, 0, measureLeftRow1, Column)</l>
+<l>gen_region_line (RegionLinesDn, measureLeftRow2, 0, measureLeftRow2, Column)</l>
+<l>intersection (RegionOpening, RegionLinesUp, RegionIntersectionUp)</l>
+<l>intersection (RegionOpening, RegionLinesDn, RegionIntersectionDn)</l>
+<l>get_region_points (RegionIntersectionUp, InterUpRows, InterUpCols)</l>
+<l>get_region_points (RegionIntersectionDn, InterDnRows, InterDnCols)</l>
+<l>tuple_min (InterUpCols, measureLeftCol1)</l>
+<l>tuple_min (InterDnCols, measureLeftCol2)</l>
+<l>* gen_cross_contour_xld (measureCross1, measureLeftRow1, measureLeftCol1, 30, 0)</l>
+<l>* gen_cross_contour_xld (measureCross2, measureLeftRow2, measureLeftCol2, 30, 0)</l>
+<c>*确定上边缘的测量位置</c>
+<l>measureUpRow1:=rectRow1-50</l>
+<l>measureUpRow2:=rectRow1-50</l>
+<l>measureUpCol1:=measureLeftCol1+470</l>
+<l>measureUpCol2:=measureLeftCol1+790</l>
+<l>* gen_cross_contour_xld (measureCross1, measureUpRow1, measureUpCol1, 30, 0)</l>
+<l>* gen_cross_contour_xld (measureCross2, measureUpRow2, measureUpCol2, 30, 0)</l>
+<c>*确定下边缘的测量位置</c>
+<l>measureDnRow1:=rectRow2+110</l>
+<l>measureDnRow2:=rectRow2+110</l>
+<l>measureDnCol1:=measureLeftCol2+410</l>
+<l>measureDnCol2:=measureLeftCol2+720</l>
+<l>* gen_cross_contour_xld (measureCross1, measureUpRow1, measureUpCol1, 30, 0)</l>
+<l>* gen_cross_contour_xld (measureCross2, measureUpRow2, measureUpCol2, 30, 0)</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c>***********************************************</c>
+<c></c>
+<c>*****************1.建立坐标系*******************</c>
+<c>*左边缘</c>
+<l>GetLine (Image, LineLeft, measureLeftRow1, measureLeftCol1, measureLeftRow2, measureLeftCol2, LeftRow1, LeftCol1, LeftRow2, LeftCol2)</l>
+<c>*上边缘</c>
+<l>GetLine (Image, LineUp, measureUpRow1, measureUpCol1, measureUpRow2, measureUpCol2, UpRow11, UpCol11, UpRow21, UpCol21)</l>
+<c>*下边缘</c>
+<l>GetLine (Image, LineDn, measureDnRow1, measureDnCol1, measureDnRow2, measureDnCol2, DnRow12, DnCol12, DnRow22, DnCol22)</l>
+<c>*XY轴</c>
+<l>intersection_lines (LeftRow1, LeftCol1, LeftRow2, LeftCol2, UpRow11, UpCol11, UpRow21, UpCol21, YRow1, YCol1, IsOverlapping1)</l>
+<l>intersection_lines (LeftRow1, LeftCol1, LeftRow2, LeftCol2, DnRow12, DnCol12, DnRow22, DnCol22, YRow2, YCol2, IsOverlapping2)</l>
+<l>* gen_cross_contour_xld (YCross1, YRow1, YCol1, 30, 0)</l>
+<l>* gen_cross_contour_xld (YCross2, YRow2, YCol2, 30, 0)   </l>
+<l>XRow1:=(YRow1+YRow2)/2</l>
+<l>XCol1:=(YCol1+YCol2)/2</l>
+<l>intersection_lines (LeftRow1, LeftCol1+2000, LeftRow2, LeftCol2+2000, UpRow11, UpCol11, UpRow21, UpCol21, tmpYRow1, tmpYCol1, IsOverlapping1)</l>
+<l>intersection_lines (LeftRow1, LeftCol1+2000, LeftRow2, LeftCol2+2000, DnRow12, DnCol12, DnRow22, DnCol22, tmpYRow2, tmpYCol2, IsOverlapping2)</l>
+<l>* gen_cross_contour_xld (YCross3, tmpYRow1, tmpYCol1, 30, 0)</l>
+<l>* gen_cross_contour_xld (YCross4, tmpYRow2, tmpYCol2, 30, 0)     </l>
+<l>XRow2:=(tmpYRow1+tmpYRow2)/2</l>
+<l>XCol2:=(tmpYCol1+tmpYCol2)/2</l>
+<c></c>
+<l>gen_region_line (RegionY, YRow1, YCol1, YRow2, YCol2)</l>
+<l>gen_region_line (RegionX, XRow1, XCol1, XRow2, XCol2)</l>
+<l>AxisX:=[XRow1,XCol1,XRow2,XCol2]</l>
+<l>AxisY:=[YRow1,YCol1,YRow2,YCol2]</l>
+<c>*************************************************************</c>
+<l>* dev_clear_window ()</l>
+<l>* dev_display (Image)</l>
+<l>* dev_display (RegionX)</l>
+<l>* dev_display (RegionY)</l>
+<c></c>
+<c>********2.计算相关夹角做矫正***************************</c>
+<l>GetCorrectAngle (XRow1, XCol1, XRow2, XCol2, YRow1, YCol1, YRow2, YCol2, SinXY, SinX, SinY)</l>
+<l>SinAngle:=[SinXY,SinX,SinY]</l>
+<c>******************************************************</c>
+<c></c>
+<l>return ()</l>
+<c></c>
+<c></c>
+<c></c>
+</body>
+<docu id="SetCoordinate">
+<abstract lang="zh_CN">建立坐标系，输出XY轴区域和坐标，还有矫正夹角</abstract>
+<parameters>
+<parameter id="AxisX"/>
+<parameter id="AxisY"/>
+<parameter id="Image"/>
+<parameter id="RegionX"/>
+<parameter id="RegionY"/>
+<parameter id="SinAngle"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

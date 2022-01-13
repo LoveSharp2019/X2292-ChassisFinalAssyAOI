@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0">
+<procedure name="GetCorrectAngle">
+<interface>
+<ic>
+<par name="XRow1" base_type="ctrl" dimension="0"/>
+<par name="XCol1" base_type="ctrl" dimension="0"/>
+<par name="XRow2" base_type="ctrl" dimension="0"/>
+<par name="XCol2" base_type="ctrl" dimension="0"/>
+<par name="YRow1" base_type="ctrl" dimension="0"/>
+<par name="YCol1" base_type="ctrl" dimension="0"/>
+<par name="YRow2" base_type="ctrl" dimension="0"/>
+<par name="YCol2" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="SinXY" base_type="ctrl" dimension="0"/>
+<par name="SinX" base_type="ctrl" dimension="0"/>
+<par name="SinY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c></c>
+<c>*X与Y夹角</c>
+<l>angle_ll (XRow1, XCol1, XRow2, XCol2, YRow1, YCol1, YRow2, YCol2, AngleXY)</l>
+<c>*X与竖直方向夹角</c>
+<l>angle_ll (0, 0, 100, 0, XRow1, XCol1, XRow2, XCol2, AngleX)</l>
+<c>*Y与水平方向夹角</c>
+<l>angle_ll (0, 0, 0, 100, YRow1, YCol1, YRow2, YCol2, AngleY)</l>
+<l>tuple_sin (abs(AngleXY), SinXY)</l>
+<l>tuple_sin (abs(AngleX), SinX)</l>
+<l>tuple_sin (abs(AngleY), SinY)</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+<c></c>
+<c></c>
+</body>
+<docu id="GetCorrectAngle">
+<abstract lang="zh_CN">计算矫正角度</abstract>
+<parameters>
+<parameter id="SinX"/>
+<parameter id="SinXY"/>
+<parameter id="SinY"/>
+<parameter id="XCol1"/>
+<parameter id="XCol2"/>
+<parameter id="XRow1"/>
+<parameter id="XRow2"/>
+<parameter id="YCol1"/>
+<parameter id="YCol2"/>
+<parameter id="YRow1"/>
+<parameter id="YRow2"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

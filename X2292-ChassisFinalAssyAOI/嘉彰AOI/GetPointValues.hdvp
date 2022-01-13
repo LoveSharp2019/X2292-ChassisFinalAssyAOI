@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="19.11.0.0">
+<procedure name="GetPointValues">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+<par name="XRows" base_type="ctrl" dimension="0"/>
+<par name="XCols" base_type="ctrl" dimension="0"/>
+<par name="YRows" base_type="ctrl" dimension="0"/>
+<par name="YCols" base_type="ctrl" dimension="0"/>
+<par name="SinXY" base_type="ctrl" dimension="0"/>
+<par name="SinX" base_type="ctrl" dimension="0"/>
+<par name="SinY" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="Rows" base_type="ctrl" dimension="0"/>
+<par name="Cols" base_type="ctrl" dimension="0"/>
+<par name="Grayvals" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>Rows:=[]</l>
+<l>Cols:=[]</l>
+<l>Grayvals:=[]</l>
+<c></c>
+<c>*定义像素坐标X,Y的分辨率</c>
+<l>rateX:=0.015</l>
+<l>rateY:=0.05</l>
+<c></c>
+<c></c>
+<l>for Index := 0 to |Xs|-1 by 1</l>
+<l>    dx:=(Xs[Index]*SinXY)/(SinY*rateX)</l>
+<l>    dy:=(Ys[Index]*SinXY)/(SinX*rateY)</l>
+<l>    intersection_lines (YRows[0], YCols[0]+dx, YRows[1], YCols[1]+dx, XRows[0]-dy, XCols[0], XRows[1]-dy, XCols[1], Row, Column, IsOverlapping)       </l>
+<c>    </c>
+<l>    gen_circle (Circle, Row, Column, 2)</l>
+<l>    get_region_points (Circle, Rs, Cs)</l>
+<l>    get_grayval (Image, Rs, Cs, Gs)</l>
+<l>    tuple_sort (Gs, Sorted)</l>
+<l>    tuple_int (|Sorted|*0.2, Int1)</l>
+<l>    tuple_int (|Sorted|*0.8, Int2)</l>
+<l>    tuple_select_range (Sorted, Int1, Int2, Selected)</l>
+<l>    tuple_mean (Selected, Grayval)</l>
+<c>    </c>
+<l>    Rows:=[Rows,Row]</l>
+<l>    Cols:=[Cols,Column]</l>
+<l>    Grayvals:=[Grayvals,Grayval]</l>
+<l>endfor  </l>
+<c></c>
+<c></c>
+<l>return ()</l>
+<c></c>
+<c></c>
+</body>
+<docu id="GetPointValues">
+<abstract lang="zh_CN">获取测量点在坐标系中的值</abstract>
+<parameters>
+<parameter id="Cols"/>
+<parameter id="Grayvals"/>
+<parameter id="Image"/>
+<parameter id="Rows"/>
+<parameter id="SinX"/>
+<parameter id="SinXY"/>
+<parameter id="SinY"/>
+<parameter id="XCols"/>
+<parameter id="XRows"/>
+<parameter id="Xs"/>
+<parameter id="YCols"/>
+<parameter id="YRows"/>
+<parameter id="Ys"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

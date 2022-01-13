@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0">
+<procedure name="TransImage">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="OutImage" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="IndexImage" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<c></c>
+<c></c>
+<l>if (IndexImage==1 or IndexImage==3 or IndexImage==5 or IndexImage==7)</l>
+<l>    mirror_image (Image, ImageMirror, 'column')</l>
+<l>    rotate_image (ImageMirror, OutImage, 180, 'constant')</l>
+<l>else </l>
+<l>    copy_image (Image, OutImage)</l>
+<l>endif</l>
+<c></c>
+<c></c>
+<c></c>
+<l>return ()</l>
+<c></c>
+<c></c>
+</body>
+<docu id="TransImage">
+<parameters>
+<parameter id="Image"/>
+<parameter id="IndexImage"/>
+<parameter id="OutImage"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

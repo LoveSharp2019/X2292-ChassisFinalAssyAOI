@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0">
+<procedure name="MeasureFlatness">
+<interface>
+<ic>
+<par name="Value1" base_type="ctrl" dimension="0"/>
+<par name="Value2" base_type="ctrl" dimension="0"/>
+<par name="Value3" base_type="ctrl" dimension="0"/>
+<par name="Value4" base_type="ctrl" dimension="0"/>
+<par name="Value5" base_type="ctrl" dimension="0"/>
+<par name="Value6" base_type="ctrl" dimension="0"/>
+<par name="Value7" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="ValuePoints" base_type="ctrl" dimension="0"/>
+<par name="ValueFlatness" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>***********************</c>
+<c>*Value1、2、3、4、5、6、7分别为第1、2、3、4、5、6、7张图所对应坐标点的值</c>
+<c>***********************</c>
+<c>*高度比例系数</c>
+<l>rateZ:=1</l>
+<c>*坐标点排列，排列顺序（B2-B8，B10-B16，B18-B24，B26-B32，B34-B40，B42-B48</c>
+<c>*B50-B56，B58-B64，B66-B72，B73-B80，B81-B82）</c>
+<l>X:=[157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    157.86,136.15,111.05,84.55,58.05,32.95,11.24,\
+    166.85,166.85,166.85,166.85,166.85,166.85,166.85,166.85,\
+    14.74,156]</l>
+<l>Y:=[-114,-114,-114,-114,-114,-114,-114,\
+    -85.5,-85.5,-85.5,-85.5,-85.5,-85.5,-85.5,\
+    -57,-57,-57,-57,-57,-57,-57,\
+    -28.5,-28.5,-28.5,-28.5,-28.5,-28.5,-28.5,\
+    0,0,0,0,0,0,0,\
+    28.5,28.5,28.5,28.5,28.5,28.5,28.5,\
+    57,57,57,57,57,57,57,\
+    85.5,85.5,85.5,85.5,85.5,85.5,85.5,\
+    114,114,114,114,114,114,114,\
+    105.07,103.07,39.88,37.88,-35.73,-37.73,-100.02,-102.02,\
+    -117.63,-117.63]</l>
+<l>Z:=[Value7[0],Value6[0],Value5[0],Value4[0],Value3[0],Value2[0],Value1[0],\
+    Value7[1],Value6[1],Value5[1],Value4[1],Value3[1],Value2[1],Value1[1],\
+    Value7[2],Value6[2],Value5[2],Value4[2],Value3[2],Value2[2],Value1[2],\
+    Value7[3],Value6[3],Value5[3],Value4[3],Value3[3],Value2[3],Value1[3],\
+    Value7[4],Value6[4],Value5[4],Value4[4],Value3[4],Value2[4],Value1[4],\
+    Value7[5],Value6[5],Value5[5],Value4[5],Value3[5],Value2[5],Value1[5],\
+    Value7[6],Value6[6],Value5[6],Value4[6],Value3[6],Value2[6],Value1[6],\
+    Value7[7],Value6[7],Value5[7],Value4[7],Value3[7],Value2[7],Value1[7],\
+    Value7[8],Value6[8],Value5[8],Value4[8],Value3[8],Value2[8],Value1[8],\
+    Value7[9],Value7[10],Value7[11],Value7[12],Value7[13],Value7[14],Value7[15],Value7[16],\
+    Value1[9],Value7[17]]</l>
+<c></c>
+<l>gen_object_model_3d_from_points (X, Y, Z, ObjectModel3D)</l>
+<l>fit_primitives_object_model_3d (ObjectModel3D, ['primitive_type','fitting_algorithm'], ['plane','least_squares'], ObjectModel3DOut)</l>
+<c>*显示3D图</c>
+<l>* visualize_object_model_3d (3600, ObjectModel3DOut, [], [], [], [], [], [], [], PoseOut)</l>
+<c></c>
+<c>*计算平面度</c>
+<l>get_object_model_3d_params (ObjectModel3DOut, 'primitive_parameter', ParamValue)</l>
+<l>tuple_sqrt (ParamValue[0]*ParamValue[0]+ParamValue[1]*ParamValue[1]+ParamValue[2]*ParamValue[2], Sqrt)</l>
+<l>ValuePoints:=[]</l>
+<l>for Index := 0 to |X|-1 by 1</l>
+<l>    d:=ParamValue[0]*X[Index]+ParamValue[1]*Y[Index]+ParamValue[2]*Z[Index]-ParamValue[3]</l>
+<l>    ValuePoints:=[ValuePoints,(d/Sqrt)*rateZ]</l>
+<l>endfor</l>
+<c></c>
+<l>tuple_max (ValuePoints, Max)</l>
+<l>tuple_min (ValuePoints, Min)</l>
+<l>ValueFlatness:=Max-Min</l>
+<c></c>
+<l>clear_object_model_3d (ObjectModel3D)</l>
+<l>clear_object_model_3d (ObjectModel3DOut)</l>
+<l>return ()</l>
+<c></c>
+<c></c>
+</body>
+<docu id="MeasureFlatness">
+<abstract lang="zh_CN">计算平面度</abstract>
+<parameters>
+<parameter id="Value1"/>
+<parameter id="Value2"/>
+<parameter id="Value3"/>
+<parameter id="Value4"/>
+<parameter id="Value5"/>
+<parameter id="Value6"/>
+<parameter id="Value7"/>
+<parameter id="ValueFlatness"/>
+<parameter id="ValuePoints"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
